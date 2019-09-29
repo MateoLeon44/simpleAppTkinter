@@ -1,13 +1,23 @@
 from tkinter import *
+import socket
+import sys
+from protocol2 import Protocol
+
+
+# _HOST = "<your-ec2-public_ip>"
+_HOST = '191.235.89.12'
+_PORT = 65439
+_REQUEST = "VIDEO"  # "BOOK" || "VIDEO"
+
 
 class Application(Frame):
 
     archivo = None
 
     def descargarArchivo(self):
+        print(self.archivo)
         if self.archivo is not None:
-            print(self.archivo)
-            return
+            self.ejecutar()
 
     def createWidgets(self):
         self.QUIT = Button(self)
@@ -16,11 +26,6 @@ class Application(Frame):
         self.QUIT["command"] =  self.quit
         self.QUIT.grid(column=0, row=2)
         
-        #self.desc_libro = Button(self)
-        #self.desc_libro["text"] = "Descargar libro"
-        #self.desc_libro["command"] = self.descargarLibro
-        #self.desc_libro.grid(column =1, row =2)
-
         self.descargar = Button(self)
         self.descargar["text"] = "Descargar archivo"
         self.descargar["command"] = self.descargarArchivo
@@ -28,7 +33,7 @@ class Application(Frame):
 
     def traerArchivos(self):
         listbox = Listbox(self)
-        for item in ["one", "two", "three", "four"]:
+        for item in ["BOOK", "VIDEO"]:
             listbox.insert(END, item)
         listbox.bind('<<ListboxSelect>>',self.getSelected)
         listbox.grid(column =1, row =1)
@@ -46,6 +51,19 @@ class Application(Frame):
         self.pack()
         self.traerArchivos()
         self.createWidgets()
+
+    def ejecutar(self):
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((_HOST, _PORT))
+
+            client = Protocol((_HOST, _PORT), sock, self.archivo)
+            client.execute()
+        except KeyboardInterrupt:
+            print("\n--> [Client End] Caught Keyboard Interrupt.\n--> Exiting\n ")
+
+
+
 
 root = Tk()
 root.geometry('400x400')

@@ -1,11 +1,12 @@
 from tkinter import *
+from tkinter import messagebox
 import socket
 import sys
 from protocol2 import Protocol
 
 
 # _HOST = "<your-ec2-public_ip>"
-_HOST = '191.235.89.12'
+_HOST = 'localhost'
 _PORT = 65439
 _REQUEST = "VIDEO"  # "BOOK" || "VIDEO"
 
@@ -56,9 +57,10 @@ class Application(Frame):
         try:
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             sock.connect((_HOST, _PORT))
-
             client = Protocol((_HOST, _PORT), sock, self.archivo)
             client.execute()
+
+            messagebox.showinfo("Mensaje de comprobación", client.imprimirRespuesta())
         except KeyboardInterrupt:
             print("\n--> [Client End] Caught Keyboard Interrupt.\n--> Exiting\n ")
 

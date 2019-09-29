@@ -21,6 +21,8 @@ _VIDEO_PATH = "new_Video.mp4"
 
 class Protocol():
 
+    respuesta = ''
+
     def __init__(self, address, socket, request):
         logging.basicConfig(
             filename='.log', format='%(levelname)s:%(message)s', level=logging.DEBUG)
@@ -106,12 +108,16 @@ class Protocol():
         # self.close()
         self.process_hash(file_path, req)
 
+    
+
     def process_hash(self, file_path, req):
         # self.request_hash()
         hasher = hashlib.sha1()
         with open(file_path, 'rb') as af:
             buf = af.read()
             hasher.update(buf)
+
+        cad = 'asd'
 
         self._request = req
         if self._request == "BOOK":
@@ -120,14 +126,17 @@ class Protocol():
 
             if self._hash.get("book").get("digest") == self._server_hash.get("book").get("digest"):
                 cad = '* --> [Client] File downloaded completely and without modifications'
+                self.respuesta = cad
                 print(cad)
                 logging.info(cad)
                 json_local = f'* --> [Cliente] Hash {json.dumps(self._hash, indent=4, sort_keys=True)}'
                 json_server = f'* --> [Cliente] Server Hash {json.dumps(self._server_hash, indent=4, sort_keys=True)}'
                 logging.info(json_local)
                 logging.info(json_server)
+                
             else:
                 cad = "* --> [Client] The downloaded file is different from the Server's original"
+                self.respuesta = cad
                 print(cad)
                 logging.info(cad)
                 json_local = f'* --> [Cliente] Hash {json.dumps(self._hash, indent=4, sort_keys=True)}'
@@ -136,20 +145,24 @@ class Protocol():
                 print(json_server)
                 logging.info(json_local)
                 logging.info(json_server)
+                
         else:
             self._hash["video"]["digested"] = repr(hasher.hexdigest())
             self._hash["video"]["size"], self._hash["video"]["block"] = hasher.digest_size, hasher.block_size
 
             if self._hash.get("video").get("digest") == self._server_hash.get("video").get("digest"):
                 cad = '* --> [Client] File downloaded completely and without modifications'
+                self.respuesta = cad
                 print(cad)
                 logging.info(cad)
                 json_local = f'* --> [Cliente] Hash {json.dumps(self._hash, indent=4, sort_keys=True)}'
                 json_server = f'* --> [Cliente] Server Hash {json.dumps(self._server_hash, indent=4, sort_keys=True)}'
                 logging.info(json_local)
                 logging.info(json_server)
+                
             else:
                 cad = "* --> [Client] The downloaded file is different from the Server's original"
+                self.respuesta = cad
                 print(cad)
                 logging.info(cad)
                 json_local = f'* --> [Cliente] Hash {json.dumps(self._hash, indent=4, sort_keys=True)}'
@@ -160,6 +173,10 @@ class Protocol():
                 logging.info(json_server)
 
         self.close()
+
+    def imprimirRespuesta(self):
+        respuestica = self.respuesta
+        return respuestica
 
     def close(self):
         try:

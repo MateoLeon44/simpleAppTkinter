@@ -8,8 +8,8 @@ SERVER PROTOCOL
 Request and Response Processing
 '''
 
-_BOOK_PATH = 'djangoFront3/tcp-master/Server/files/book100.pdf'
-_VIDEO_PATH = 'djangoFront3/tcp-master/Server/files/video200.mp4'
+_BOOK_PATH = 'djangoFront2/files/book100.pdf'
+_VIDEO_PATH = 'djangoFront2/files/video200.mp4'
 _BUFFER_SIZE = 1024  # 4086
 _ENCODING = "utf-8"
 

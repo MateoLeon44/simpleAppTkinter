@@ -126,7 +126,8 @@ class Protocol():
 
             if self._hash.get("book").get("digest") == self._server_hash.get("book").get("digest"):
                 cad = '* --> [Client] File downloaded completely and without modifications'
-                self.respuesta = cad
+                cad2 = 'Descarga realizada, se comprobó la integridad del archivo'
+                self.respuesta = cad2
                 print(cad)
                 logging.info(cad)
                 json_local = f'* --> [Cliente] Hash {json.dumps(self._hash, indent=4, sort_keys=True)}'
@@ -136,7 +137,8 @@ class Protocol():
                 
             else:
                 cad = "* --> [Client] The downloaded file is different from the Server's original"
-                self.respuesta = cad
+                cad2 = 'El archivo descargado es diferente al del servidor'
+                self.respuesta = cad2
                 print(cad)
                 logging.info(cad)
                 json_local = f'* --> [Cliente] Hash {json.dumps(self._hash, indent=4, sort_keys=True)}'
@@ -152,7 +154,8 @@ class Protocol():
 
             if self._hash.get("video").get("digest") == self._server_hash.get("video").get("digest"):
                 cad = '* --> [Client] File downloaded completely and without modifications'
-                self.respuesta = cad
+                cad2 = 'Descarga realizada, se comprobó la integridad del archivo'
+                self.respuesta = cad2
                 print(cad)
                 logging.info(cad)
                 json_local = f'* --> [Cliente] Hash {json.dumps(self._hash, indent=4, sort_keys=True)}'
@@ -162,7 +165,8 @@ class Protocol():
                 
             else:
                 cad = "* --> [Client] The downloaded file is different from the Server's original"
-                self.respuesta = cad
+                cad2 = 'El archivo descargado es diferente al del servidor'
+                self.respuesta = cad2
                 print(cad)
                 logging.info(cad)
                 json_local = f'* --> [Cliente] Hash {json.dumps(self._hash, indent=4, sort_keys=True)}'

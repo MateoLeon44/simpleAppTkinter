@@ -6,8 +6,8 @@ from protocol2 import Protocol
 
 
 # _HOST = "<your-ec2-public_ip>"
-_HOST = 'localhost'
-_PORT = 65439
+_HOST = '191.238.209.152'
+_PORT = 3333
 _REQUEST = "VIDEO"  # "BOOK" || "VIDEO"
 
 

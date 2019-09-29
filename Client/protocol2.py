@@ -22,6 +22,9 @@ _VIDEO_PATH = "new_Video.mp4"
 class Protocol():
 
     respuesta = ''
+    files2 = None
+    dataFile = None
+    tiempoRespuesta = None
 
     def __init__(self, address, socket, request):
         logging.basicConfig(
@@ -55,18 +58,30 @@ class Protocol():
         logging.info(
             f'\n--> [Client] Connection Established with Server {self.addr}')
         self.start = time.time()
-        self._read()
+        self._read2()
+        
 
     def _read(self):
-        data = self.sock.recv(_BUFFER_SIZE)
-        if data:
-            formatted = json.loads(data.decode(
+        self.dataFile = self.sock.recv(_BUFFER_SIZE)
+        formatted = json.loads(self.dataFile.decode(
+        _ENCODING).replace('"', "").replace("'", '"'))
+        self._server_files = formatted
+        self.files2 = formatted
+            # prints JSON server files object
+            #print(json.dumps(self._server_files, indent=4, sort_keys=True))
+    
+    def _read2(self):
+        if self.dataFile:
+            formatted = json.loads(self.dataFile.decode(
                 _ENCODING).replace('"', "").replace("'", '"'))
             self._server_files = formatted
             # prints JSON server files object
             #print(json.dumps(self._server_files, indent=4, sort_keys=True))
             self.request_hash()
             self.process_download(self.req)
+
+    def darFiles(self):
+        return self.files2
 
     def request_hash(self):
         self._request = "HASH"
@@ -190,6 +205,8 @@ class Protocol():
             elapsed = self.end - self.start
             cad = '* --> [Client] Connection Elapsed Time:\n* --> {0:0.6f} seconds'.format(
                 elapsed)
+            self.tiempoRespuesta = str(elapsed)
+            self.darTiempo()
             print(cad)
             logging.info(cad)
             cad = '--> [Client] Connection finished\n'
@@ -203,3 +220,6 @@ class Protocol():
                 f'[Socket Close Error] --> self.sock.close() @ Thread {self.addr}\n{repr(e)}')
         finally:
             self.sock = None
+
+    def darTiempo(self):
+        return self.tiempoRespuesta

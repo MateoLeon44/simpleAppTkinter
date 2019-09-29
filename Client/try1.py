@@ -14,6 +14,8 @@ _REQUEST = "VIDEO"  # "BOOK" || "VIDEO"
 class Application(Frame):
 
     archivo = None
+    client = None
+
 
     def descargarArchivo(self):
         print(self.archivo)
@@ -25,42 +27,56 @@ class Application(Frame):
         self.QUIT["text"] = "QUIT"
         self.QUIT["fg"]   = "red"
         self.QUIT["command"] =  self.quit
-        self.QUIT.grid(column=0, row=2)
+        self.QUIT.grid(column=0, row=1)
         
         self.descargar = Button(self)
         self.descargar["text"] = "Descargar archivo"
         self.descargar["command"] = self.descargarArchivo
-        self.descargar.grid(column =1, row =2)
+        self.descargar.grid(column =1, row =1)
 
     def traerArchivos(self):
-        listbox = Listbox(self)
-        for item in ["BOOK", "VIDEO"]:
-            listbox.insert(END, item)
+        listbox = Listbox(self, width=40, height=10)
+        self.client._read()
+        archivos = self.client.darFiles()
+        for value in archivos.values():
+            listbox.insert(END,value['name'])
         listbox.bind('<<ListboxSelect>>',self.getSelected)
-        listbox.grid(column =1, row =1)
+        listbox.grid(column =0, row =0)
     
     def getSelected(self, evt):
         w = evt.widget
         index = int(w.curselection()[0])
         value = w.get(index)
+        if value == 'Closer - Lemaitre':
+            value = 'VIDEO'
+            self.client.req = 'VIDEO'
+        else:
+            value = 'BOOK'
+            self.client.req = 'BOOK'
         self.archivo = value
         print(index,value)
 
 
     def __init__(self, master=None):
         Frame.__init__(self, master)
-        self.pack()
-        self.traerArchivos()
-        self.createWidgets()
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            sock.connect((_HOST, _PORT))
+            messagebox.showinfo("Conexión al servidor", "Se estableció la conexión con el servidor" + _HOST)
+            self.client = Protocol((_HOST, _PORT), sock, 'VIDEO')
+            self.pack()
+            self.traerArchivos()
+            self.createWidgets()
+        except:
+            messagebox.showinfo("Error", "No se pudo establecer conexión con el servidor " + _HOST)
+            root.destroy()
+        
 
     def ejecutar(self):
         try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((_HOST, _PORT))
-            client = Protocol((_HOST, _PORT), sock, self.archivo)
-            client.execute()
-
-            messagebox.showinfo("Mensaje de comprobación", client.imprimirRespuesta())
+            print(self.client.req)
+            self.client.execute()
+            messagebox.showinfo("Mensaje de comprobación", self.client.imprimirRespuesta() + ". El tiempo desde conexión hasta el final de la transferencia fue de: " + self.client.darTiempo() + " segundos")
         except KeyboardInterrupt:
             print("\n--> [Client End] Caught Keyboard Interrupt.\n--> Exiting\n ")
 
